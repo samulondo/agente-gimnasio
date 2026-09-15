@@ -1,0 +1,269 @@
+[
+  {
+    "id": "fullbody-principiante-3d",
+    "nombre": "Full Body para empezar",
+    "objetivo": "perdida_grasa",
+    "nivel": "principiante",
+    "dias_por_semana": 3,
+    "notas": "Ideal para quien inicia en el gimnasio. Trabaja todo el cuerpo cada sesión con ejercicios básicos.",
+    "dias": [
+      {
+        "dia": "Día 1",
+        "enfoque": "Cuerpo completo A",
+        "ejercicios": [
+          {"nombre": "Sentadilla goblet", "series": 3, "repeticiones": "12-15"},
+          {"nombre": "Press con mancuernas", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Remo con mancuerna a una mano", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Plancha abdominal", "series": 3, "repeticiones": "30-45 seg"}
+        ]
+      },
+      {
+        "dia": "Día 2",
+        "enfoque": "Cuerpo completo B",
+        "ejercicios": [
+          {"nombre": "Prensa de piernas", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Jalón al pecho en polea", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Elevaciones laterales", "series": 3, "repeticiones": "12-15"},
+          {"nombre": "Crunch abdominal", "series": 3, "repeticiones": "15-20"}
+        ]
+      },
+      {
+        "dia": "Día 3",
+        "enfoque": "Cuerpo completo + cardio",
+        "ejercicios": [
+          {"nombre": "Zancadas con mancuernas", "series": 3, "repeticiones": "10-12 por pierna"},
+          {"nombre": "Press con mancuernas", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Remo con mancuerna a una mano", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Trote continuo", "series": 1, "repeticiones": "20 minutos"}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "torso-pierna-intermedio-4d",
+    "nombre": "Torso-Pierna para hipertrofia",
+    "objetivo": "hipertrofia",
+    "nivel": "intermedio",
+    "dias_por_semana": 4,
+    "notas": "Divide el entrenamiento en torso y pierna dos veces por semana, con buen volumen para ganar masa muscular.",
+    "dias": [
+      {
+        "dia": "Día 1",
+        "enfoque": "Torso A",
+        "ejercicios": [
+          {"nombre": "Press de banca", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Remo con barra", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Press militar con barra", "series": 3, "repeticiones": "8-10"},
+          {"nombre": "Curl de bíceps con barra", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Extensión de tríceps en polea", "series": 3, "repeticiones": "12-15"}
+        ]
+      },
+      {
+        "dia": "Día 2",
+        "enfoque": "Pierna A",
+        "ejercicios": [
+          {"nombre": "Sentadilla con barra", "series": 4, "repeticiones": "6-10"},
+          {"nombre": "Peso muerto rumano", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Prensa de piernas", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Elevación de piernas colgado", "series": 3, "repeticiones": "10-15"}
+        ]
+      },
+      {
+        "dia": "Día 3",
+        "enfoque": "Torso B",
+        "ejercicios": [
+          {"nombre": "Fondos en paralelas", "series": 4, "repeticiones": "8-12"},
+          {"nombre": "Dominadas", "series": 4, "repeticiones": "6-10"},
+          {"nombre": "Elevaciones laterales", "series": 3, "repeticiones": "12-15"},
+          {"nombre": "Curl martillo", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Press francés", "series": 3, "repeticiones": "10-12"}
+        ]
+      },
+      {
+        "dia": "Día 4",
+        "enfoque": "Pierna B",
+        "ejercicios": [
+          {"nombre": "Zancadas con mancuernas", "series": 3, "repeticiones": "10-12 por pierna"},
+          {"nombre": "Prensa de piernas", "series": 4, "repeticiones": "10-12"},
+          {"nombre": "Peso muerto rumano", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Crunch abdominal", "series": 3, "repeticiones": "15-20"}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ppl-avanzado-6d",
+    "nombre": "Push / Pull / Legs",
+    "objetivo": "hipertrofia",
+    "nivel": "avanzado",
+    "dias_por_semana": 6,
+    "notas": "Rutina de alto volumen que separa empuje, tracción y pierna, repitiendo el ciclo dos veces por semana.",
+    "dias": [
+      {
+        "dia": "Día 1",
+        "enfoque": "Push (empuje)",
+        "ejercicios": [
+          {"nombre": "Press de banca", "series": 4, "repeticiones": "6-10"},
+          {"nombre": "Press militar con barra", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Aperturas con mancuernas", "series": 3, "repeticiones": "12-15"},
+          {"nombre": "Extensión de tríceps en polea", "series": 3, "repeticiones": "12-15"}
+        ]
+      },
+      {
+        "dia": "Día 2",
+        "enfoque": "Pull (tracción)",
+        "ejercicios": [
+          {"nombre": "Dominadas", "series": 4, "repeticiones": "6-10"},
+          {"nombre": "Remo con barra", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Pájaros (elevaciones posteriores)", "series": 3, "repeticiones": "12-15"},
+          {"nombre": "Curl de bíceps con barra", "series": 3, "repeticiones": "10-12"}
+        ]
+      },
+      {
+        "dia": "Día 3",
+        "enfoque": "Legs (pierna)",
+        "ejercicios": [
+          {"nombre": "Sentadilla con barra", "series": 4, "repeticiones": "6-10"},
+          {"nombre": "Peso muerto rumano", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Prensa de piernas", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Elevación de piernas colgado", "series": 3, "repeticiones": "10-15"}
+        ]
+      },
+      {
+        "dia": "Día 4",
+        "enfoque": "Push (empuje) 2",
+        "ejercicios": [
+          {"nombre": "Press con mancuernas", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Fondos en paralelas", "series": 3, "repeticiones": "8-12"},
+          {"nombre": "Elevaciones laterales", "series": 3, "repeticiones": "12-15"},
+          {"nombre": "Press francés", "series": 3, "repeticiones": "10-12"}
+        ]
+      },
+      {
+        "dia": "Día 5",
+        "enfoque": "Pull (tracción) 2",
+        "ejercicios": [
+          {"nombre": "Jalón al pecho en polea", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Remo con mancuerna a una mano", "series": 4, "repeticiones": "8-10 por lado"},
+          {"nombre": "Curl martillo", "series": 3, "repeticiones": "10-12"}
+        ]
+      },
+      {
+        "dia": "Día 6",
+        "enfoque": "Legs (pierna) 2",
+        "ejercicios": [
+          {"nombre": "Zancadas con mancuernas", "series": 3, "repeticiones": "10-12 por pierna"},
+          {"nombre": "Sentadilla goblet", "series": 3, "repeticiones": "12-15"},
+          {"nombre": "Crunch abdominal", "series": 3, "repeticiones": "15-20"}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fuerza-intermedio-4d",
+    "nombre": "Fuerza en básicos",
+    "objetivo": "fuerza",
+    "nivel": "intermedio",
+    "dias_por_semana": 4,
+    "notas": "Prioriza los levantamientos básicos con series bajas y cargas altas para ganar fuerza máxima.",
+    "dias": [
+      {
+        "dia": "Día 1",
+        "enfoque": "Tren superior - empuje",
+        "ejercicios": [
+          {"nombre": "Press de banca", "series": 5, "repeticiones": "3-5"},
+          {"nombre": "Press militar con barra", "series": 4, "repeticiones": "5-6"},
+          {"nombre": "Extensión de tríceps en polea", "series": 3, "repeticiones": "8-10"}
+        ]
+      },
+      {
+        "dia": "Día 2",
+        "enfoque": "Tren inferior - sentadilla",
+        "ejercicios": [
+          {"nombre": "Sentadilla con barra", "series": 5, "repeticiones": "3-5"},
+          {"nombre": "Peso muerto rumano", "series": 3, "repeticiones": "6-8"},
+          {"nombre": "Plancha abdominal", "series": 3, "repeticiones": "45 seg"}
+        ]
+      },
+      {
+        "dia": "Día 3",
+        "enfoque": "Tren superior - tracción",
+        "ejercicios": [
+          {"nombre": "Dominadas", "series": 5, "repeticiones": "5-6"},
+          {"nombre": "Remo con barra", "series": 4, "repeticiones": "5-6"},
+          {"nombre": "Curl de bíceps con barra", "series": 3, "repeticiones": "8-10"}
+        ]
+      },
+      {
+        "dia": "Día 4",
+        "enfoque": "Tren inferior - peso muerto",
+        "ejercicios": [
+          {"nombre": "Peso muerto rumano", "series": 5, "repeticiones": "3-5"},
+          {"nombre": "Prensa de piernas", "series": 4, "repeticiones": "6-8"},
+          {"nombre": "Elevación de piernas colgado", "series": 3, "repeticiones": "10-15"}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "metabolico-principiante-3d",
+    "nombre": "Circuito metabólico para perder grasa",
+    "objetivo": "perdida_grasa",
+    "nivel": "principiante",
+    "dias_por_semana": 3,
+    "notas": "Combina fuerza con poco descanso y cardio corto para maximizar el gasto calórico de la sesión.",
+    "dias": [
+      {
+        "dia": "Día 1",
+        "enfoque": "Circuito cuerpo completo A",
+        "ejercicios": [
+          {"nombre": "Sentadilla goblet", "series": 3, "repeticiones": "15"},
+          {"nombre": "Press con mancuernas", "series": 3, "repeticiones": "12"},
+          {"nombre": "Remo con mancuerna a una mano", "series": 3, "repeticiones": "12 por lado"},
+          {"nombre": "HIIT en bicicleta", "series": 1, "repeticiones": "8 series"}
+        ]
+      },
+      {
+        "dia": "Día 2",
+        "enfoque": "Circuito cuerpo completo B",
+        "ejercicios": [
+          {"nombre": "Zancadas con mancuernas", "series": 3, "repeticiones": "12 por pierna"},
+          {"nombre": "Jalón al pecho en polea", "series": 3, "repeticiones": "12"},
+          {"nombre": "Elevaciones laterales", "series": 3, "repeticiones": "15"},
+          {"nombre": "Plancha abdominal", "series": 3, "repeticiones": "40 seg"}
+        ]
+      },
+      {
+        "dia": "Día 3",
+        "enfoque": "Circuito + cardio continuo",
+        "ejercicios": [
+          {"nombre": "Prensa de piernas", "series": 3, "repeticiones": "15"},
+          {"nombre": "Curl martillo", "series": 3, "repeticiones": "12"},
+          {"nombre": "Extensión de tríceps en polea", "series": 3, "repeticiones": "15"},
+          {"nombre": "Trote continuo", "series": 1, "repeticiones": "25 minutos"}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resistencia-intermedio-5d",
+    "nombre": "Resistencia general",
+    "objetivo": "resistencia",
+    "nivel": "intermedio",
+    "dias_por_semana": 5,
+    "notas": "Combina cardio de distinta intensidad con fuerza ligera de mantenimiento para mejorar la capacidad aeróbica.",
+    "dias": [
+      {"dia": "Día 1", "enfoque": "Cardio continuo", "ejercicios": [{"nombre": "Trote continuo", "series": 1, "repeticiones": "30 minutos"}]},
+      {"dia": "Día 2", "enfoque": "Fuerza de mantenimiento - torso", "ejercicios": [
+        {"nombre": "Press con mancuernas", "series": 3, "repeticiones": "12-15"},
+        {"nombre": "Remo con mancuerna a una mano", "series": 3, "repeticiones": "12-15"}
+      ]},
+      {"dia": "Día 3", "enfoque": "HIIT", "ejercicios": [{"nombre": "HIIT en bicicleta", "series": 1, "repeticiones": "10 series"}]},
+      {"dia": "Día 4", "enfoque": "Fuerza de mantenimiento - pierna", "ejercicios": [
+        {"nombre": "Sentadilla goblet", "series": 3, "repeticiones": "15"},
+        {"nombre": "Peso muerto rumano", "series": 3, "repeticiones": "12-15"}
+      ]},
+      {"dia": "Día 5", "enfoque": "Cardio largo suave", "ejercicios": [{"nombre": "Trote continuo", "series": 1, "repeticiones": "35-40 minutos"}]}
+    ]
+  }
+]

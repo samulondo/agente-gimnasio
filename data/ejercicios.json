@@ -1,0 +1,227 @@
+[
+  {
+    "nombre": "Press de banca",
+    "grupo_muscular": "pecho",
+    "equipo": "barra",
+    "nivel": "intermedio",
+    "series_repeticiones": "4x8-10",
+    "tecnica": "Acuéstate en el banco con los pies firmes en el piso, baja la barra de forma controlada hasta rozar el pecho y empuja sin bloquear del todo los codos.",
+    "alternativas": ["Press con mancuernas", "Press en máquina", "Flexiones de pecho"]
+  },
+  {
+    "nombre": "Press con mancuernas",
+    "grupo_muscular": "pecho",
+    "equipo": "mancuernas",
+    "nivel": "principiante",
+    "series_repeticiones": "3x10-12",
+    "tecnica": "Recostado en el banco, baja las mancuernas a los lados del pecho con control y empuja hacia arriba juntando ligeramente al final.",
+    "alternativas": ["Press de banca", "Aperturas con mancuernas", "Press en máquina"]
+  },
+  {
+    "nombre": "Aperturas con mancuernas",
+    "grupo_muscular": "pecho",
+    "equipo": "mancuernas",
+    "nivel": "principiante",
+    "series_repeticiones": "3x12-15",
+    "tecnica": "Con los brazos semiflexionados, abre y cierra los brazos en forma de arco controlando el descenso para evitar sobrecargar el hombro.",
+    "alternativas": ["Cruces en polea", "Press con mancuernas"]
+  },
+  {
+    "nombre": "Fondos en paralelas",
+    "grupo_muscular": "pecho",
+    "equipo": "peso corporal",
+    "nivel": "avanzado",
+    "series_repeticiones": "3x8-12",
+    "tecnica": "Baja el cuerpo flexionando los codos hasta sentir estiramiento en el pecho y empuja hasta extender los brazos sin encoger los hombros.",
+    "alternativas": ["Flexiones de pecho", "Press de banca"]
+  },
+  {
+    "nombre": "Dominadas",
+    "grupo_muscular": "espalda",
+    "equipo": "peso corporal",
+    "nivel": "avanzado",
+    "series_repeticiones": "4x6-10",
+    "tecnica": "Cuelga de la barra con agarre prono, sube hasta que la barbilla pase la barra y baja de forma controlada sin balancear el cuerpo.",
+    "alternativas": ["Jalón al pecho en polea", "Remo con mancuerna"]
+  },
+  {
+    "nombre": "Remo con barra",
+    "grupo_muscular": "espalda",
+    "equipo": "barra",
+    "nivel": "intermedio",
+    "series_repeticiones": "4x8-10",
+    "tecnica": "Con el torso inclinado y la espalda recta, tira de la barra hacia el abdomen apretando los omóplatos y baja con control.",
+    "alternativas": ["Remo en máquina", "Remo con mancuerna"]
+  },
+  {
+    "nombre": "Jalón al pecho en polea",
+    "grupo_muscular": "espalda",
+    "equipo": "polea",
+    "nivel": "principiante",
+    "series_repeticiones": "3x10-12",
+    "tecnica": "Tira de la barra hacia la parte alta del pecho llevando los codos hacia abajo y atrás, sin usar impulso del cuerpo.",
+    "alternativas": ["Dominadas asistidas", "Remo con barra"]
+  },
+  {
+    "nombre": "Remo con mancuerna a una mano",
+    "grupo_muscular": "espalda",
+    "equipo": "mancuernas",
+    "nivel": "principiante",
+    "series_repeticiones": "3x10-12 por lado",
+    "tecnica": "Apoya una rodilla y una mano en el banco, tira de la mancuerna hacia la cadera manteniendo la espalda neutra.",
+    "alternativas": ["Remo con barra", "Jalón al pecho en polea"]
+  },
+  {
+    "nombre": "Sentadilla con barra",
+    "grupo_muscular": "piernas",
+    "equipo": "barra",
+    "nivel": "intermedio",
+    "series_repeticiones": "4x6-10",
+    "tecnica": "Con la barra apoyada en la espalda alta, baja flexionando cadera y rodillas manteniendo el pecho arriba, hasta que los muslos queden paralelos al piso.",
+    "alternativas": ["Sentadilla goblet", "Prensa de piernas", "Sentadilla en máquina Smith"]
+  },
+  {
+    "nombre": "Sentadilla goblet",
+    "grupo_muscular": "piernas",
+    "equipo": "mancuerna",
+    "nivel": "principiante",
+    "series_repeticiones": "3x12-15",
+    "tecnica": "Sostén una mancuerna contra el pecho y baja en sentadilla manteniendo el torso erguido y las rodillas alineadas con los pies.",
+    "alternativas": ["Sentadilla con barra", "Prensa de piernas"]
+  },
+  {
+    "nombre": "Peso muerto rumano",
+    "grupo_muscular": "piernas",
+    "equipo": "barra",
+    "nivel": "intermedio",
+    "series_repeticiones": "4x8-10",
+    "tecnica": "Con la espalda recta, baja la barra pegada a las piernas flexionando la cadera hasta sentir estiramiento en los isquiotibiales, sin redondear la espalda.",
+    "alternativas": ["Peso muerto convencional", "Curl femoral en máquina"]
+  },
+  {
+    "nombre": "Prensa de piernas",
+    "grupo_muscular": "piernas",
+    "equipo": "máquina",
+    "nivel": "principiante",
+    "series_repeticiones": "4x10-12",
+    "tecnica": "Coloca los pies al ancho de hombros en la plataforma y empuja sin bloquear del todo las rodillas al extender.",
+    "alternativas": ["Sentadilla goblet", "Sentadilla con barra"]
+  },
+  {
+    "nombre": "Zancadas con mancuernas",
+    "grupo_muscular": "piernas",
+    "equipo": "mancuernas",
+    "nivel": "intermedio",
+    "series_repeticiones": "3x10-12 por pierna",
+    "tecnica": "Da un paso al frente y baja hasta que ambas rodillas formen un ángulo de 90 grados, manteniendo el torso erguido.",
+    "alternativas": ["Sentadilla búlgara", "Prensa de piernas"]
+  },
+  {
+    "nombre": "Press militar con barra",
+    "grupo_muscular": "hombros",
+    "equipo": "barra",
+    "nivel": "intermedio",
+    "series_repeticiones": "4x8-10",
+    "tecnica": "De pie, empuja la barra desde los hombros hasta la extensión completa de los brazos sin arquear excesivamente la espalda baja.",
+    "alternativas": ["Press de hombros con mancuernas", "Press en máquina"]
+  },
+  {
+    "nombre": "Elevaciones laterales",
+    "grupo_muscular": "hombros",
+    "equipo": "mancuernas",
+    "nivel": "principiante",
+    "series_repeticiones": "3x12-15",
+    "tecnica": "Levanta las mancuernas hacia los lados hasta la altura de los hombros con los codos ligeramente flexionados, sin usar impulso.",
+    "alternativas": ["Elevaciones en polea", "Press militar"]
+  },
+  {
+    "nombre": "Pájaros (elevaciones posteriores)",
+    "grupo_muscular": "hombros",
+    "equipo": "mancuernas",
+    "nivel": "principiante",
+    "series_repeticiones": "3x12-15",
+    "tecnica": "Inclinado hacia adelante, eleva las mancuernas hacia los lados enfocando el trabajo en la parte posterior del hombro.",
+    "alternativas": ["Face pull en polea"]
+  },
+  {
+    "nombre": "Curl de bíceps con barra",
+    "grupo_muscular": "brazos",
+    "equipo": "barra",
+    "nivel": "principiante",
+    "series_repeticiones": "3x10-12",
+    "tecnica": "Con los codos fijos al torso, flexiona los brazos llevando la barra hacia el pecho sin balancear el cuerpo.",
+    "alternativas": ["Curl con mancuernas", "Curl en polea"]
+  },
+  {
+    "nombre": "Curl martillo",
+    "grupo_muscular": "brazos",
+    "equipo": "mancuernas",
+    "nivel": "principiante",
+    "series_repeticiones": "3x10-12",
+    "tecnica": "Flexiona los brazos con las mancuernas en posición neutra (pulgares hacia arriba) sin girar la muñeca.",
+    "alternativas": ["Curl de bíceps con barra"]
+  },
+  {
+    "nombre": "Press francés",
+    "grupo_muscular": "brazos",
+    "equipo": "barra Z",
+    "nivel": "intermedio",
+    "series_repeticiones": "3x10-12",
+    "tecnica": "Acostado, baja la barra hacia la frente flexionando solo los codos y extiende de nuevo sin mover los brazos superiores.",
+    "alternativas": ["Extensión de tríceps en polea", "Fondos en banco"]
+  },
+  {
+    "nombre": "Extensión de tríceps en polea",
+    "grupo_muscular": "brazos",
+    "equipo": "polea",
+    "nivel": "principiante",
+    "series_repeticiones": "3x12-15",
+    "tecnica": "Con los codos pegados al torso, extiende los brazos empujando la cuerda o barra hacia abajo sin mover los hombros.",
+    "alternativas": ["Press francés", "Fondos en banco"]
+  },
+  {
+    "nombre": "Plancha abdominal",
+    "grupo_muscular": "core",
+    "equipo": "peso corporal",
+    "nivel": "principiante",
+    "series_repeticiones": "3x30-45 segundos",
+    "tecnica": "Apoya antebrazos y puntas de los pies manteniendo el cuerpo en línea recta, sin dejar caer la cadera.",
+    "alternativas": ["Plancha lateral", "Rueda abdominal"]
+  },
+  {
+    "nombre": "Elevación de piernas colgado",
+    "grupo_muscular": "core",
+    "equipo": "barra de dominadas",
+    "nivel": "intermedio",
+    "series_repeticiones": "3x10-15",
+    "tecnica": "Colgado de la barra, eleva las piernas hacia el pecho controlando el movimiento y evitando balancearse.",
+    "alternativas": ["Elevación de rodillas en paralelas", "Crunch abdominal"]
+  },
+  {
+    "nombre": "Crunch abdominal",
+    "grupo_muscular": "core",
+    "equipo": "peso corporal",
+    "nivel": "principiante",
+    "series_repeticiones": "3x15-20",
+    "tecnica": "Recostado, flexiona el torso llevando los hombros hacia la cadera sin tirar del cuello con las manos.",
+    "alternativas": ["Plancha abdominal", "Rueda abdominal"]
+  },
+  {
+    "nombre": "Trote continuo",
+    "grupo_muscular": "cardio",
+    "equipo": "ninguno o cinta",
+    "nivel": "principiante",
+    "series_repeticiones": "20-30 minutos a ritmo moderado",
+    "tecnica": "Mantén un ritmo constante donde puedas hablar con algo de esfuerzo (zona aeróbica moderada).",
+    "alternativas": ["Bicicleta estática", "Elíptica"]
+  },
+  {
+    "nombre": "HIIT en bicicleta",
+    "grupo_muscular": "cardio",
+    "equipo": "bicicleta estática",
+    "nivel": "intermedio",
+    "series_repeticiones": "8-10 series de 30 segundos fuerte / 90 segundos suave",
+    "tecnica": "Alterna esfuerzo máximo con recuperación activa; ideal para mejorar capacidad cardiovascular en poco tiempo.",
+    "alternativas": ["HIIT en cinta", "Circuito metabólico"]
+  }
+]

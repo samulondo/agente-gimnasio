@@ -1,0 +1,64 @@
+{
+  "hipertrofia": {
+    "descripcion": "Ganar masa muscular requiere un ligero superávit calórico y suficiente proteína para sintetizar tejido nuevo.",
+    "ajuste_calorico_pct": 10,
+    "proteina_g_por_kg": 2.0,
+    "grasa_g_por_kg": 0.9,
+    "tips": [
+      "Prioriza fuentes de proteína completa en cada comida (huevo, pollo, pescado, lácteos, legumbres).",
+      "Distribuye la proteína en 4-5 comidas para favorecer la síntesis muscular a lo largo del día.",
+      "No subas el superávit calórico demasiado rápido para evitar ganar grasa en exceso.",
+      "El descanso y el sueño son tan importantes como la comida para recuperar y crecer."
+    ],
+    "alimentos_recomendados": ["Pechuga de pollo", "Huevos", "Arroz", "Avena", "Frutos secos", "Yogur griego", "Batata"]
+  },
+  "perdida_grasa": {
+    "descripcion": "Perder grasa requiere un déficit calórico moderado manteniendo suficiente proteína para conservar la masa muscular.",
+    "ajuste_calorico_pct": -20,
+    "proteina_g_por_kg": 2.2,
+    "grasa_g_por_kg": 0.8,
+    "tips": [
+      "Evita déficits muy agresivos (mayores al 25-30%); suelen ser insostenibles y afectan el rendimiento.",
+      "Prioriza alimentos con volumen y saciedad: vegetales, proteína magra y fibra.",
+      "Mantén el entrenamiento de fuerza para conservar músculo mientras pierdes grasa.",
+      "El déficit sostenido en el tiempo importa más que la velocidad de la pérdida semanal."
+    ],
+    "alimentos_recomendados": ["Pechuga de pollo", "Pescado blanco", "Vegetales de hoja verde", "Claras de huevo", "Legumbres", "Frutas"]
+  },
+  "mantenimiento": {
+    "descripcion": "Mantener el peso y la composición corporal actual, cubriendo el gasto calórico total sin superávit ni déficit.",
+    "ajuste_calorico_pct": 0,
+    "proteina_g_por_kg": 1.8,
+    "grasa_g_por_kg": 0.9,
+    "tips": [
+      "Ajusta las calorías según cambios en el peso corporal a lo largo de varias semanas, no de un día para otro.",
+      "Mantén variedad de alimentos para asegurar micronutrientes.",
+      "La hidratación adecuada también influye en el rendimiento y la recuperación."
+    ],
+    "alimentos_recomendados": ["Proteínas variadas", "Cereales integrales", "Frutas y verduras", "Grasas saludables (aguacate, aceite de oliva, frutos secos)"]
+  },
+  "fuerza": {
+    "descripcion": "El entrenamiento de fuerza se beneficia de un aporte calórico suficiente y buena ingesta de carbohidratos para rendir en cargas altas.",
+    "ajuste_calorico_pct": 5,
+    "proteina_g_por_kg": 2.0,
+    "grasa_g_por_kg": 0.9,
+    "tips": [
+      "Asegura carbohidratos antes del entrenamiento para tener energía disponible en series pesadas.",
+      "El descanso entre series pesadas debe ser suficiente (2-4 minutos) para mantener la calidad técnica.",
+      "La creatina monohidratada es uno de los suplementos con más evidencia para fuerza, aunque no es obligatoria."
+    ],
+    "alimentos_recomendados": ["Arroz", "Pasta integral", "Carnes rojas magras", "Huevos", "Papa", "Frutos secos"]
+  },
+  "resistencia": {
+    "descripcion": "Los deportes de resistencia dependen principalmente de un buen aporte de carbohidratos para sostener el esfuerzo prolongado.",
+    "ajuste_calorico_pct": 0,
+    "proteina_g_por_kg": 1.6,
+    "grasa_g_por_kg": 0.8,
+    "tips": [
+      "Aumenta los carbohidratos los días de sesiones largas o de alta intensidad.",
+      "Hidrátate antes, durante y después de sesiones de más de 60 minutos.",
+      "Incluye electrolitos en sesiones largas o con mucho calor."
+    ],
+    "alimentos_recomendados": ["Avena", "Plátano", "Arroz", "Pasta", "Frutas frescas", "Bebidas isotónicas en sesiones largas"]
+  }
+}
