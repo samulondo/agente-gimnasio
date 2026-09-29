@@ -1,25 +1,12 @@
-"""Utilidades de nutrición deportiva: guías generales y cálculo de macros.
-
-Este módulo expone dos herramientas para el agente:
-
-- ``consultar_nutricion``: devuelve la guía nutricional general asociada
-  a un objetivo (hipertrofia, pérdida de grasa, mantenimiento, fuerza o
-  resistencia).
-- ``calcular_macros``: estima el gasto calórico diario del usuario con la
-  fórmula de Mifflin-St Jeor y distribuye las calorías en proteína, grasa
-  y carbohidratos según su objetivo.
-
-Estas herramientas ofrecen guías generales de nutrición deportiva y no
-reemplazan la valoración de un nutricionista o médico, especialmente en
-personas con condiciones de salud particulares.
-"""
+"""Utilidades de nutrición deportiva: guías generales y cálculo de macros."""
 
 import json
 from pathlib import Path
 
+from langchain.tools import tool
+
 DATA_FILE = Path(__file__).resolve().parent.parent / "data" / "nutricion.json"
 
-# Factor de actividad física utilizado en la fórmula de Harris/Mifflin.
 FACTORES_ACTIVIDAD = {
     "sedentario": 1.2,
     "ligero": 1.375,
@@ -34,19 +21,7 @@ def _cargar_nutricion() -> dict:
         return json.load(archivo)
 
 
-def consultar_nutricion(objetivo: str) -> dict:
-    """Devuelve la guía nutricional general para un objetivo de entrenamiento.
-
-    Args:
-        objetivo: Objetivo del usuario. Valores esperados: "hipertrofia",
-            "perdida_grasa", "mantenimiento", "fuerza" o "resistencia".
-
-    Returns:
-        Diccionario con la descripción, el ajuste calórico recomendado,
-        las referencias de macronutrientes por kilogramo, consejos
-        prácticos y alimentos recomendados. Si el objetivo no existe en
-        la base de datos, incluye una lista vacía y un mensaje aclaratorio.
-    """
+def _buscar_guia_nutricional(objetivo: str) -> dict:
     guias = _cargar_nutricion()
     objetivo_norm = objetivo.lower().strip().replace(" ", "_")
 
@@ -61,7 +36,7 @@ def consultar_nutricion(objetivo: str) -> dict:
     return {"objetivo": objetivo_norm, "encontrado": True, **guias[objetivo_norm]}
 
 
-def calcular_macros(
+def _calcular_macros(
     peso_kg: float,
     altura_cm: float,
     edad: int,
@@ -69,30 +44,6 @@ def calcular_macros(
     nivel_actividad: str,
     objetivo: str,
 ) -> dict:
-    """Calcula el gasto calórico diario y la distribución de macronutrientes.
-
-    Usa la ecuación de Mifflin-St Jeor para estimar la tasa metabólica
-    basal (TMB), la multiplica por un factor de actividad para obtener el
-    gasto calórico total (TDEE) y aplica el ajuste calórico correspondiente
-    al objetivo del usuario. Finalmente distribuye las calorías resultantes
-    en proteína, grasa y carbohidratos.
-
-    Args:
-        peso_kg: Peso corporal del usuario en kilogramos.
-        altura_cm: Estatura del usuario en centímetros.
-        edad: Edad del usuario en años.
-        sexo: "hombre" o "mujer" (usado únicamente para el ajuste de la
-            fórmula de Mifflin-St Jeor).
-        nivel_actividad: Uno de "sedentario", "ligero", "moderado",
-            "activo" o "muy_activo".
-        objetivo: Objetivo del usuario, usado para aplicar el ajuste
-            calórico y la referencia de proteína/grasa por kilogramo.
-
-    Returns:
-        Diccionario con la TMB, el gasto calórico total, las calorías
-        objetivo y los gramos recomendados de proteína, grasa y
-        carbohidratos por día.
-    """
     guias = _cargar_nutricion()
     objetivo_norm = objetivo.lower().strip().replace(" ", "_")
     guia = guias.get(objetivo_norm, guias["mantenimiento"])
@@ -124,3 +75,53 @@ def calcular_macros(
             "carbohidratos_g": round(carbohidratos_g),
         },
     }
+
+
+@tool
+def consultar_nutricion(objetivo: str) -> dict:
+    """Devuelve la guía nutricional general para un objetivo de entrenamiento.
+
+    Args:
+        objetivo: Objetivo del usuario. Valores esperados: "hipertrofia",
+            "perdida_grasa", "mantenimiento", "fuerza" o "resistencia".
+
+    Returns:
+        Diccionario con la descripción, el ajuste calórico recomendado,
+        las referencias de macronutrientes por kilogramo, consejos
+        prácticos y alimentos recomendados.
+    """
+    return _buscar_guia_nutricional(objetivo)
+
+
+@tool
+def calcular_macros(
+    peso_kg: float,
+    altura_cm: float,
+    edad: int,
+    sexo: str,
+    nivel_actividad: str,
+    objetivo: str,
+) -> dict:
+    """Calcula el gasto calórico diario y la distribución de macronutrientes.
+
+    Usa la ecuación de Mifflin-St Jeor para estimar la tasa metabólica
+    basal (TMB), la multiplica por un factor de actividad para obtener el
+    gasto calórico total (TDEE) y aplica el ajuste calórico correspondiente
+    al objetivo del usuario.
+
+    Args:
+        peso_kg: Peso corporal del usuario en kilogramos.
+        altura_cm: Estatura del usuario en centímetros.
+        edad: Edad del usuario en años.
+        sexo: "hombre" o "mujer".
+        nivel_actividad: Uno de "sedentario", "ligero", "moderado",
+            "activo" o "muy_activo".
+        objetivo: Objetivo del usuario, usado para el ajuste calórico y
+            la referencia de proteína/grasa por kilogramo.
+
+    Returns:
+        Diccionario con la TMB, el gasto calórico total, las calorías
+        objetivo y los gramos recomendados de proteína, grasa y
+        carbohidratos por día.
+    """
+    return _calcular_macros(peso_kg, altura_cm, edad, sexo, nivel_actividad, objetivo)

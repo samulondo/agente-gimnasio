@@ -1,23 +1,24 @@
-"""Integración del agente de gimnasio con la API de Gemini.
+"""Núcleo del Agente de Gimnasio v2 con LangChain.
 
-Este módulo configura el cliente de Gemini y proporciona las funciones
-necesarias para construir el contexto del agente y generar respuestas a
-partir de los mensajes del usuario.
-
-El agente utiliza la información conocida del usuario, la memoria
-reciente de la conversación y un conjunto de herramientas (rutinas,
-ejercicios y nutrición) para responder consultas sobre entrenamiento y
-alimentación.
+Decide si una solicitud se resuelve mediante una Chain determinista
+(preguntas conceptuales) o mediante un Agent con múltiples Tools
+(consultas que requieren datos del usuario, rutinas, ejercicios,
+nutrición o una recomendación priorizada).
 """
 
 from typing import TypedDict
 
-from google import genai
-from google.genai import types
+from langchain.agents import create_agent
+from langchain_google_genai import ChatGoogleGenerativeAI
 
+from chains.response_chain import crear_respuesta_chain
+from chains.router_chain import crear_router_chain
 from config.settings import GEMINI_API_KEY, GEMINI_MODEL
+from prompts.gym_prompt import AGENT_SYSTEM_TEMPLATE
 from tools.ejercicio_tool import consultar_ejercicio
+from tools.fecha_tool import obtener_fecha
 from tools.nutricion_tool import calcular_macros, consultar_nutricion
+from tools.recomendacion_tool import generar_recomendacion_priorizada
 from tools.rutina_tool import consultar_rutina
 
 
@@ -35,107 +36,131 @@ class Usuario(TypedDict):
     restricciones: list[str]
 
 
-# Cliente utilizado para realizar solicitudes a la API de Gemini.
-client = genai.Client(api_key=GEMINI_API_KEY)
+TOOLS = [
+    obtener_fecha,
+    consultar_rutina,
+    consultar_ejercicio,
+    consultar_nutricion,
+    calcular_macros,
+    generar_recomendacion_priorizada,
+]
 
 
-def construir_contexto(usuario: Usuario, memoria: str) -> str:
-    """Construye las instrucciones de contexto para el agente de gimnasio.
+def _crear_modelo() -> ChatGoogleGenerativeAI:
+    return ChatGoogleGenerativeAI(
+        model=GEMINI_MODEL,
+        api_key=GEMINI_API_KEY,
+        temperature=0.1,
+    )
 
-    Combina la información actual del usuario con la memoria reciente de
-    la conversación y las instrucciones que determinan el comportamiento
-    del modelo, incluyendo cuándo debe usar cada herramienta disponible y
-    las restricciones de seguridad que debe respetar.
 
-    Args:
-        usuario: Información de entrenamiento actual del usuario.
-        memoria: Representación textual de los mensajes recientes de la
-            conversación.
-
-    Returns:
-        Instrucción de sistema que se enviará al modelo Gemini como
-        contexto.
-    """
+def _construir_system_prompt(usuario: Usuario, memoria: str) -> str:
     restricciones = (
         "; ".join(usuario["restricciones"]) if usuario["restricciones"] else "Ninguna registrada"
     )
 
-    return f"""
-Eres un agente de gimnasio: ayudas con rutinas de entrenamiento, técnica de
-ejercicios y alimentación deportiva.
-
-ESTADO ACTUAL DEL USUARIO:
-Nombre: {usuario["nombre"]}
-Objetivo: {usuario["objetivo"]}
-Nivel: {usuario["nivel"]}
-Días disponibles por semana: {usuario["dias_disponibles"]}
-Peso (kg): {usuario["peso_kg"]}
-Altura (cm): {usuario["altura_cm"]}
-Edad: {usuario["edad"]}
-Sexo: {usuario["sexo"]}
-Molestias o restricciones mencionadas: {restricciones}
-
-MEMORIA RECIENTE:
-{memoria}
-
-Dispones de estas herramientas:
-- consultar_rutina: para recomendar una rutina según objetivo, nivel y días disponibles.
-- consultar_ejercicio: para explicar la técnica, el grupo muscular o alternativas de un ejercicio.
-- consultar_nutricion: para dar una guía general de alimentación según el objetivo.
-- calcular_macros: para estimar calorías y macronutrientes diarios cuando el
-  usuario ha dado peso, altura, edad, sexo y nivel de actividad.
-
-Usa la herramienta correspondiente en vez de inventar datos de rutinas,
-ejercicios o cálculos nutricionales.
-
-Restricciones importantes de seguridad:
-- No diagnostiques lesiones ni reemplaces a un médico, fisioterapeuta o
-  nutricionista: si el usuario menciona dolor o una lesión, recomienda
-  pausar el ejercicio implicado y consultar a un profesional antes de
-  continuar con esa parte de la rutina.
-- No recomiendes suplementación farmacológica ni dietas extremas.
-- No aumentes drásticamente cargas, volumen o restricción calórica sin que
-  el usuario lo confirme explícitamente.
-- Si el objetivo o los datos del usuario parecen poco realistas o riesgosos,
-  sugiere una alternativa más segura en lugar de seguir la petición al pie
-  de la letra.
-
-Si puedes responder usando el estado o la memoria, responde directamente.
-Sé breve, claro y motivador.
-""".strip()
+    return AGENT_SYSTEM_TEMPLATE.format(
+        nombre=usuario["nombre"],
+        objetivo=usuario["objetivo"],
+        nivel=usuario["nivel"],
+        dias_disponibles=usuario["dias_disponibles"],
+        peso_kg=usuario["peso_kg"],
+        altura_cm=usuario["altura_cm"],
+        edad=usuario["edad"],
+        sexo=usuario["sexo"],
+        restricciones=restricciones,
+        memoria=memoria or "Sin memoria reciente.",
+    )
 
 
-def responder(
-    mensaje_usuario: str,
-    usuario: Usuario,
-    memoria: str,
-) -> str:
-    """Genera una respuesta del agente de gimnasio mediante Gemini.
+def _extraer_texto_final(result: dict) -> str:
+    """Extrae el contenido textual del último mensaje del Agent."""
+    mensajes = result.get("messages", [])
 
-    Construye el contexto de la conversación y envía el mensaje del
-    usuario al modelo configurado de Gemini. El modelo puede utilizar las
-    herramientas de rutinas, ejercicios y nutrición cuando la consulta lo
-    requiera.
+    if not mensajes:
+        return "No fue posible generar una respuesta."
+
+    contenido = mensajes[-1].content
+
+    if isinstance(contenido, str):
+        return contenido
+
+    if isinstance(contenido, list):
+        partes = []
+        for bloque in contenido:
+            if isinstance(bloque, dict) and bloque.get("type") == "text":
+                partes.append(str(bloque.get("text", "")))
+            elif isinstance(bloque, str):
+                partes.append(bloque)
+        texto = "\n".join(p for p in partes if p).strip()
+        return texto or "No fue posible generar una respuesta."
+
+    return str(contenido)
+
+
+def _detectar_tools_usadas(result: dict) -> list[str]:
+    """Obtiene los nombres de las Tools invocadas por el modelo."""
+    usadas: list[str] = []
+
+    for mensaje in result.get("messages", []):
+        tool_calls = getattr(mensaje, "tool_calls", None) or []
+
+        for call in tool_calls:
+            nombre = call.get("name")
+            if nombre and nombre not in usadas:
+                usadas.append(nombre)
+
+    return usadas
+
+
+def responder(mensaje_usuario: str, usuario: Usuario, memoria: str) -> dict:
+    """Responde mediante Chain o Agent según la naturaleza de la consulta.
+
+    Primero ejecuta la Router Chain para clasificar la solicitud. Si la
+    ruta elegida es "chain", responde con la Response Chain (rápida y
+    sin herramientas). Si es "agent", instancia un Agent multi-tool con
+    el contexto del usuario y deja que Gemini decida qué herramientas
+    invocar.
 
     Args:
         mensaje_usuario: Mensaje enviado por el usuario.
         usuario: Información de entrenamiento actual del usuario.
-        memoria: Representación textual de los mensajes recientes de la
-            conversación.
+        memoria: Representación textual de los mensajes recientes.
 
     Returns:
-        Respuesta textual generada por Gemini. Si el modelo no devuelve
-        contenido textual, se retorna un mensaje predeterminado.
+        Diccionario con la respuesta generada, la ruta elegida
+        ("Chain" o "Agent"), el motivo de esa elección y la lista de
+        herramientas utilizadas (vacía si fue por Chain).
     """
-    contexto = construir_contexto(usuario, memoria)
+    router = crear_router_chain()
+    decision = router.invoke({"pregunta": mensaje_usuario})
 
-    response = client.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=mensaje_usuario,
-        config=types.GenerateContentConfig(
-            system_instruction=contexto,
-            tools=[consultar_rutina, consultar_ejercicio, consultar_nutricion, calcular_macros],
-        ),
+    if decision.ruta == "chain":
+        chain = crear_respuesta_chain()
+        texto = chain.invoke({"pregunta": mensaje_usuario})
+
+        return {
+            "respuesta": texto,
+            "ruta": "Chain",
+            "motivo": decision.motivo,
+            "tools": [],
+        }
+
+    model = _crear_modelo()
+
+    agent = create_agent(
+        model=model,
+        tools=TOOLS,
+        system_prompt=_construir_system_prompt(usuario=usuario, memoria=memoria),
     )
 
-    return response.text or "No fue posible generar una respuesta."
+    result = agent.invoke(
+        {"messages": [{"role": "user", "content": mensaje_usuario}]}
+    )
+
+    return {
+        "respuesta": _extraer_texto_final(result),
+        "ruta": "Agent",
+        "motivo": decision.motivo,
+        "tools": _detectar_tools_usadas(result),
+    }

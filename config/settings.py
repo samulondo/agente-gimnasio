@@ -1,18 +1,17 @@
-"""
-Configuración de variables de entorno para la API de Gemini.
+"""Configuración central del Agente de Gimnasio v2 con LangChain.
 
-Este módulo carga las variables definidas en el archivo `.env` y
-proporciona la configuración necesaria para interactuar con la API de Gemini.
+Carga las variables definidas en el archivo `.env` y proporciona la
+configuración necesaria para interactuar con la API de Gemini a través
+de LangChain.
 """
 
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-flash-latest"
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 
 def validar_configuracion() -> None:
@@ -22,7 +21,7 @@ def validar_configuracion() -> None:
         ValueError: Si `GEMINI_API_KEY` no está definida o conserva el valor
             de ejemplo.
     """
-    if not GEMINI_API_KEY or GEMINI_API_KEY == "GEMINI_API_KEY":
+    if not GEMINI_API_KEY or GEMINI_API_KEY == "tu_api_key_aqui":
         raise ValueError(
             "Configura una API Key válida en el archivo .env "
             "usando GEMINI_API_KEY."

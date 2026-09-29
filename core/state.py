@@ -1,13 +1,10 @@
-"""Gestión del estado de sesión y memoria del usuario en Streamlit.
+"""Gestión del estado de sesión, memoria y trazabilidad en Streamlit.
 
 Este módulo administra la información básica del usuario del gimnasio
 (objetivo, nivel, días disponibles, datos antropométricos y posibles
-restricciones) y el historial de mensajes almacenados en
-``st.session_state``.
-
-También incluye utilidades para identificar estos datos a partir de texto
-libre, construir una memoria reciente de la conversación y reiniciar el
-estado de la sesión.
+restricciones), el historial de mensajes, y el registro de la última
+ejecución del agente (ruta elegida por el enrutador, motivo y
+herramientas invocadas) para mostrarlo en el panel de trazabilidad.
 """
 
 import re
@@ -15,7 +12,6 @@ import re
 import streamlit as st
 
 
-# Estado inicial utilizado cuando aún no se ha identificado al usuario.
 USUARIO_INICIAL = {
     "nombre": "No registrado",
     "objetivo": "No registrado",
@@ -28,9 +24,12 @@ USUARIO_INICIAL = {
     "restricciones": [],
 }
 
+ULTIMA_EJECUCION_INICIAL = {
+    "ruta": "Sin ejecución",
+    "motivo": "",
+    "tools": [],
+}
 
-# Frases utilizadas para identificar el objetivo de entrenamiento del
-# usuario a partir de texto libre.
 OBJETIVOS = {
     "perder grasa": "perdida_grasa",
     "bajar de peso": "perdida_grasa",
@@ -55,52 +54,39 @@ OBJETIVOS = {
     "mantenimiento": "mantenimiento",
 }
 
-# Niveles de experiencia reconocidos en el texto del usuario.
 NIVELES = ["principiante", "intermedio", "avanzado"]
 
-# Palabras clave que indican una posible molestia, dolor o lesión y que
-# deben registrarse como restricción para el agente.
+PALABRAS_NO_NOMBRE = {
+    "hombre", "mujer", "masculino", "femenino",
+    "principiante", "intermedio", "avanzado",
+}
+
 PALABRAS_RESTRICCION = ["dolor", "lesion", "lesión", "lesionado", "lesionada", "molestia"]
 
 
 def inicializar_estado() -> None:
-    """Inicializa las variables necesarias en el estado de sesión.
-
-    Crea la información inicial del usuario y el historial de mensajes
-    únicamente cuando dichas variables aún no existen en
-    ``st.session_state``, para conservarlas entre las distintas
-    ejecuciones de la aplicación Streamlit dentro de una misma sesión.
-    """
+    """Inicializa las variables necesarias en el estado de sesión."""
     if "usuario" not in st.session_state:
-        st.session_state.usuario = {
-            **USUARIO_INICIAL,
-            "restricciones": [],
-        }
+        st.session_state.usuario = {**USUARIO_INICIAL, "restricciones": []}
 
     if "mensajes" not in st.session_state:
         st.session_state.mensajes = []
 
+    if "ultima_ejecucion" not in st.session_state:
+        st.session_state.ultima_ejecucion = {**ULTIMA_EJECUCION_INICIAL, "tools": []}
+
 
 def actualizar_estado_usuario(texto: str) -> None:
-    """Actualiza los datos del usuario identificados en un texto.
-
-    Analiza el mensaje recibido para detectar el nombre, el objetivo de
-    entrenamiento, el nivel de experiencia, los días disponibles por
-    semana, datos antropométricos (peso, altura, edad, sexo) y posibles
-    restricciones (dolor o lesiones). Los valores encontrados se
-    almacenan directamente en ``st.session_state.usuario``.
-
-    Args:
-        texto: Mensaje escrito por el usuario del cual se intentará
-            extraer su información personal y de entrenamiento.
-    """
+    """Actualiza los datos del usuario identificados en un texto."""
     texto_lower = texto.lower()
     usuario = st.session_state.usuario
 
     patron_nombre = r"(?:soy|me llamo)\s+([A-Za-zÁÉÍÓÚáéíóúÑñ]+)"
-    coincidencia = re.search(patron_nombre, texto, re.IGNORECASE)
-    if coincidencia:
-        usuario["nombre"] = coincidencia.group(1).capitalize()
+    for coincidencia in re.finditer(patron_nombre, texto, re.IGNORECASE):
+        posible_nombre = coincidencia.group(1)
+        if posible_nombre.lower() not in PALABRAS_NO_NOMBRE:
+            usuario["nombre"] = posible_nombre.capitalize()
+            break
 
     for frase, objetivo in OBJETIVOS.items():
         if frase in texto_lower:
@@ -144,46 +130,35 @@ def actualizar_estado_usuario(texto: str) -> None:
 
 
 def agregar_mensaje(role: str, content: str) -> None:
-    """Agrega un mensaje al historial de conversación de la sesión.
-
-    Args:
-        role: Rol asociado al mensaje, por ejemplo ``"user"`` o
-            ``"assistant"``.
-        content: Contenido textual del mensaje que se desea almacenar.
-    """
-    st.session_state.mensajes.append(
-        {
-            "role": role,
-            "content": content,
-        }
-    )
+    """Agrega un mensaje al historial de conversación de la sesión."""
+    st.session_state.mensajes.append({"role": role, "content": content})
 
 
 def obtener_memoria(limite: int = 6) -> str:
-    """Construye una representación textual de los mensajes recientes.
-
-    Args:
-        limite: Número máximo de mensajes recientes que se incluirán.
-            Por defecto se utilizan los últimos 6 mensajes.
-
-    Returns:
-        Cadena con los mensajes recientes en formato ``"role: content"``,
-        separados por saltos de línea. Devuelve una cadena vacía si no
-        existen mensajes almacenados.
-    """
+    """Construye una representación textual de los mensajes recientes."""
     mensajes = st.session_state.mensajes[-limite:]
 
     return "\n".join(
-        f"{mensaje['role']}: {mensaje['content']}"
-        for mensaje in mensajes
+        f"{mensaje['role']}: {mensaje['content']}" for mensaje in mensajes
     )
 
 
-def reiniciar_estado() -> None:
-    """Restablece la información de la sesión a sus valores iniciales.
+def registrar_ejecucion(resultado: dict) -> None:
+    """Guarda la ruta, el motivo y las herramientas de la última ejecución.
 
-    Elimina el historial de conversación y reemplaza la información del
-    usuario por una nueva copia de ``USUARIO_INICIAL``.
+    Args:
+        resultado: Diccionario devuelto por `core.agent.responder`, con
+            las llaves "ruta", "motivo" y "tools".
     """
+    st.session_state.ultima_ejecucion = {
+        "ruta": resultado.get("ruta", "Desconocida"),
+        "motivo": resultado.get("motivo", ""),
+        "tools": resultado.get("tools", []),
+    }
+
+
+def reiniciar_estado() -> None:
+    """Restablece la información de la sesión a sus valores iniciales."""
     st.session_state.mensajes = []
     st.session_state.usuario = {**USUARIO_INICIAL, "restricciones": []}
+    st.session_state.ultima_ejecucion = {**ULTIMA_EJECUCION_INICIAL, "tools": []}

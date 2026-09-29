@@ -3,11 +3,18 @@
 Este módulo carga y filtra las rutinas almacenadas en el archivo JSON de
 datos de la aplicación según el objetivo, el nivel y los días disponibles
 del usuario.
+
+La lógica de búsqueda vive en `_buscar_rutinas` (función normal de
+Python) para poder reutilizarla desde otras herramientas, como
+`tools/recomendacion_tool.py`. `consultar_rutina` es la Tool de
+LangChain que expone esa lógica al agente.
 """
 
 import json
 from pathlib import Path
 from typing import TypedDict
+
+from langchain.tools import tool
 
 
 class DiaRutina(TypedDict):
@@ -33,26 +40,8 @@ class Rutina(TypedDict):
 DATA_FILE = Path(__file__).resolve().parents[1] / "data" / "rutinas.json"
 
 
-def consultar_rutina(objetivo: str = "", nivel: str = "", dias: int = 0) -> dict:
-    """Busca rutinas de entrenamiento según objetivo, nivel y días disponibles.
-
-    La búsqueda no distingue entre mayúsculas y minúsculas. Si se indica
-    ``dias``, se priorizan las rutinas cuyo número de días por semana
-    coincide exactamente, y si no hay coincidencia exacta se devuelven
-    las más cercanas.
-
-    Args:
-        objetivo: Objetivo de entrenamiento del usuario. Valores esperados:
-            "hipertrofia", "perdida_grasa", "fuerza", "resistencia".
-        nivel: Nivel de experiencia del usuario: "principiante",
-            "intermedio" o "avanzado".
-        dias: Número de días por semana que el usuario tiene disponibles
-            para entrenar. Usa 0 para no filtrar por este criterio.
-
-    Returns:
-        Diccionario con la consulta realizada, la lista de rutinas que
-        coinciden y la cantidad de resultados encontrados.
-    """
+def _buscar_rutinas(objetivo: str = "", nivel: str = "", dias: int = 0) -> dict:
+    """Busca rutinas de entrenamiento según objetivo, nivel y días disponibles."""
     with DATA_FILE.open("r", encoding="utf-8") as archivo:
         rutinas: list[Rutina] = json.load(archivo)
 
@@ -82,3 +71,22 @@ def consultar_rutina(objetivo: str = "", nivel: str = "", dias: int = 0) -> dict
         "resultados": resultados,
         "cantidad": len(resultados),
     }
+
+
+@tool
+def consultar_rutina(objetivo: str = "", nivel: str = "", dias: int = 0) -> dict:
+    """Busca rutinas de entrenamiento según objetivo, nivel y días disponibles.
+
+    Args:
+        objetivo: Objetivo de entrenamiento. Valores esperados:
+            "hipertrofia", "perdida_grasa", "fuerza", "resistencia".
+        nivel: Nivel de experiencia: "principiante", "intermedio" o
+            "avanzado".
+        dias: Número de días por semana disponibles para entrenar. Usa 0
+            para no filtrar por este criterio.
+
+    Returns:
+        Diccionario con la consulta realizada, la lista de rutinas que
+        coinciden y la cantidad de resultados encontrados.
+    """
+    return _buscar_rutinas(objetivo, nivel, dias)

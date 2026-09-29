@@ -1,21 +1,9 @@
-"""Interfaz principal del agente de gimnasio desarrollado con Streamlit.
+"""Interfaz principal del agente de gimnasio (v2, LangChain).
 
-Este módulo configura y ejecuta la interfaz web del agente de gimnasio.
-Gestiona la visualización del estado del usuario, el historial de
-conversación y la interacción entre el usuario y el agente basado en
-Gemini.
-
-El flujo principal de la aplicación incluye:
-
-- Validación de la configuración requerida.
-- Inicialización del estado de sesión.
-- Visualización de la información de entrenamiento del usuario en el
-  panel lateral izquierdo, actualizada en cada mensaje.
-- Renderizado del historial de conversación.
-- Captura de nuevos mensajes del usuario.
-- Actualización del estado y la memoria conversacional.
-- Generación de respuestas mediante el agente de gimnasio.
-- Reinicio de la conversación cuando el usuario lo solicita.
+Gestiona la visualización del estado del usuario, el panel de
+trazabilidad de la última ejecución (ruta, motivo y herramientas
+utilizadas), el historial de conversación y la interacción entre el
+usuario y el agente basado en LangChain + Gemini.
 """
 
 import streamlit as st
@@ -27,6 +15,7 @@ from core.state import (
     actualizar_estado_usuario,
     inicializar_estado,
     obtener_memoria,
+    registrar_ejecucion,
     reiniciar_estado,
 )
 
@@ -37,7 +26,6 @@ st.set_page_config(
 )
 
 
-# Valida que las variables necesarias para utilizar Gemini estén configuradas.
 try:
     validar_configuracion()
 except ValueError as error:
@@ -45,20 +33,17 @@ except ValueError as error:
     st.stop()
 
 
-# Inicializa el estado persistente de la sesión de Streamlit.
 inicializar_estado()
 
 
-# Encabezado principal de la aplicación.
 st.title("🏋️ Agente de Gimnasio")
 st.caption("Rutinas, ejercicios y alimentación")
 st.write(
-    "MVP con Gemini, contexto, memoria, estado y herramientas de rutinas, "
-    "ejercicios y nutrición."
+    "Versión con LangChain: Router Chain, Response Chain, Agent "
+    "multi-tool y trazabilidad en tiempo real."
 )
 
 
-# Panel lateral izquierdo con la información de entrenamiento conocida del usuario.
 with st.sidebar:
     st.subheader("Estado del usuario")
 
@@ -81,19 +66,33 @@ with st.sidebar:
         st.write("Ninguna registrada")
 
     st.divider()
+    st.subheader("Última ejecución")
+
+    ejecucion = st.session_state.ultima_ejecucion
+    st.write("**Ruta:**", ejecucion["ruta"])
+
+    if ejecucion["motivo"]:
+        st.caption(ejecucion["motivo"])
+
+    if ejecucion["tools"]:
+        st.write("**Tools utilizadas:**")
+        for nombre in ejecucion["tools"]:
+            st.write(f"- {nombre}")
+    else:
+        st.write("**Tools utilizadas:** ninguna")
+
+    st.divider()
 
     if st.button("Reiniciar conversación"):
         reiniciar_estado()
         st.rerun()
 
 
-# Renderiza el historial de mensajes almacenados en la sesión.
 for mensaje in st.session_state.mensajes:
     with st.chat_message(mensaje["role"]):
         st.markdown(mensaje["content"])
 
 
-# Captura una nueva consulta del usuario.
 prompt = st.chat_input("Pregunta sobre tu rutina, un ejercicio o tu alimentación...")
 
 if prompt:
@@ -104,13 +103,15 @@ if prompt:
     agregar_mensaje("user", prompt)
 
     try:
-        respuesta = responder(
+        resultado = responder(
             mensaje_usuario=prompt,
             usuario=st.session_state.usuario,
             memoria=obtener_memoria(),
         )
+        respuesta = resultado["respuesta"]
+        registrar_ejecucion(resultado)
     except Exception as error:
-        respuesta = f"Ocurrió un error al consultar Gemini: {error}"
+        respuesta = f"Ocurrió un error al procesar la solicitud: {error}"
 
     with st.chat_message("assistant"):
         st.markdown(respuesta)
