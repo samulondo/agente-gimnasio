@@ -10,8 +10,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+# .strip() evita fallos si la variable de entorno quedó con un salto de
+# línea o espacios invisibles al pegarla en el proveedor de despliegue.
+GEMINI_API_KEY = (os.getenv("GEMINI_API_KEY") or "").strip()
+GEMINI_MODEL = (os.getenv("GEMINI_MODEL") or "gemini-2.5-flash").strip()
 
 
 def validar_configuracion() -> None:
