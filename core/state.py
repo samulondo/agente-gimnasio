@@ -1,16 +1,43 @@
-"""Gestión del estado de sesión, memoria y trazabilidad en Streamlit.
+"""Gestión del estado de sesión, memoria y trazabilidad en Streamlit y LangGraph.
 
-Este módulo administra la información básica del usuario del gimnasio
-(objetivo, nivel, días disponibles, datos antropométricos y posibles
-restricciones), el historial de mensajes, y el registro de la última
-ejecución del agente (ruta elegida por el enrutador, motivo y
-herramientas invocadas) para mostrarlo en el panel de trazabilidad.
+Este módulo administra la información básica del usuario del gimnasio,
+el historial de mensajes mediante reducers de LangGraph, y el registro de la
+última ejecución del agente para la interfaz gráfica.
 """
 
 import re
-
+from typing import Annotated, TypedDict
+from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
 import streamlit as st
 
+
+# ==========================================
+# 1. ESQUEMA DE ESTADO LANGGRAPH (PASO 8)
+# ==========================================
+
+class UsuarioGimnasioInfo(TypedDict):
+    nombre: str
+    objetivo: str
+    nivel: str
+    dias_disponibles: str
+    peso_kg: str
+    altura_cm: str
+    edad: str
+    sexo: str
+    restricciones: list[str]
+
+
+class GymState(TypedDict):
+    """Estado principal del grafo de LangGraph."""
+    # Reducer automático: gestiona HumanMessage, AIMessage y ToolMessage
+    messages: Annotated[list[BaseMessage], add_messages]
+    usuario: UsuarioGimnasioInfo
+
+
+# ==========================================
+# 2. CONFIGURACIÓN Y CONSTANTES DE STREAMLIT
+# ==========================================
 
 USUARIO_INICIAL = {
     "nombre": "No registrado",
@@ -63,6 +90,10 @@ PALABRAS_NO_NOMBRE = {
 
 PALABRAS_RESTRICCION = ["dolor", "lesion", "lesión", "lesionado", "lesionada", "molestia"]
 
+
+# ==========================================
+# 3. FUNCIONES DE GESTIÓN DE SESIÓN
+# ==========================================
 
 def inicializar_estado() -> None:
     """Inicializa las variables necesarias en el estado de sesión."""
@@ -144,12 +175,7 @@ def obtener_memoria(limite: int = 6) -> str:
 
 
 def registrar_ejecucion(resultado: dict) -> None:
-    """Guarda la ruta, el motivo y las herramientas de la última ejecución.
-
-    Args:
-        resultado: Diccionario devuelto por `core.agent.responder`, con
-            las llaves "ruta", "motivo" y "tools".
-    """
+    """Guarda la ruta, el motivo y las herramientas de la última ejecución."""
     st.session_state.ultima_ejecucion = {
         "ruta": resultado.get("ruta", "Desconocida"),
         "motivo": resultado.get("motivo", ""),
