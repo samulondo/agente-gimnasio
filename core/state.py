@@ -33,6 +33,9 @@ class GymState(TypedDict):
     # Reducer automático: gestiona HumanMessage, AIMessage y ToolMessage
     messages: Annotated[list[BaseMessage], add_messages]
     usuario: UsuarioGimnasioInfo
+    ruta: str
+    motivo: str
+    pasos_ejecutados: list[str]
 
 
 # ==========================================

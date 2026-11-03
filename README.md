@@ -1,112 +1,82 @@
-# Agente de Gimnasio (v2 · LangChain)
+# Agente de Gimnasio v03 — LangGraph
 
-Agente conversacional construido con Streamlit, LangChain y Gemini que
-ayuda con rutinas de entrenamiento, técnica de ejercicios y alimentación
-deportiva. Evoluciona la v1 (SDK nativo `google-genai`) hacia una
-composición agéntica con **Router Chain**, **Response Chain**, un
-**Agent multi-tool** y **trazabilidad en vivo** en la interfaz.
+Aplicación conversacional desarrollada con Streamlit, LangChain, LangGraph y Gemini para orientar sobre rutinas, ejercicios y alimentación deportiva.
 
-## Arquitectura v2
+## Arquitectura
 
-```
-Usuario → Streamlit UI → Regex State (perfil del usuario)
-        → Router Chain (Pydantic: "chain" o "agent")
-             ├── chain → Response Chain (LCEL directa, sin herramientas)
-             └── agent → Agent multi-tool (create_agent + 6 tools)
-        → Respuesta + Trazabilidad en el panel lateral
+```text
+START → enrutador
+          ├── conceptual → END
+          └── agente_gimnasio
+                 ├── tool calls → herramientas → agente_gimnasio
+                 └── respuesta final → END
 ```
 
-## Estructura del proyecto
+- `StateGraph` define el flujo.
+- `GymState` usa `add_messages` como reducer para incorporar mensajes al historial.
+- `ToolNode` ejecuta las herramientas solicitadas por el modelo.
+- `MemorySaver` conserva el estado durante la conversación.
+- `thread_id` identifica el hilo de conversación.
+- La interfaz muestra el perfil, el identificador del hilo y la ruta de nodos ejecutados.
 
-```
-app.py                          Interfaz de Streamlit (chat + panel lateral + trazabilidad)
-config/settings.py              Carga de variables de entorno y validación
-prompts/gym_prompt.py           Prompts centralizados (router, chain, agent)
-chains/router_chain.py          Clasificador Pydantic: chain vs agent
-chains/response_chain.py        Respuesta directa LCEL para preguntas conceptuales
-chains/recomendacion_chain.py   Chain anidada: prioriza y adapta una rutina
-core/agent.py                   Orquestador: despacha a Chain o Agent
-core/state.py                   Estado de sesión, memoria y trazabilidad
-tools/fecha_tool.py             Herramienta: fecha y día actual
-tools/rutina_tool.py            Herramienta: consultar rutinas de entrenamiento
-tools/ejercicio_tool.py         Herramienta: consultar ejercicios y su técnica
-tools/nutricion_tool.py         Herramientas: guía nutricional y cálculo de macros
-tools/recomendacion_tool.py     Herramienta con Chain anidada: recomendación priorizada
-data/rutinas.json               Rutinas por objetivo, nivel y días por semana
-data/ejercicios.json            Base de ejercicios con técnica y alternativas
-data/nutricion.json             Guías nutricionales por objetivo
-render.yaml                     Configuración de despliegue en Render
-```
+## Requisitos
 
-## Panel lateral
+- Python 3.11
+- Una clave de API de Google Gemini
 
-- **Estado del usuario**: nombre, objetivo, nivel, días disponibles, peso,
-  altura, edad, sexo y molestias/restricciones, extraídos automáticamente
-  del texto del usuario (`core/state.py`).
-- **Última ejecución**: la ruta elegida por el Router Chain ("Chain" o
-  "Agent"), el motivo de esa clasificación, y las herramientas invocadas
-  en esa respuesta (si las hubo).
+## Ejecución local
 
-## Las 6 herramientas del Agent
-
-- **obtener_fecha**: fecha, día de la semana y hora actual.
-- **consultar_rutina(objetivo, nivel, dias)**: busca la rutina más adecuada.
-- **consultar_ejercicio(consulta)**: técnica y alternativas de un ejercicio.
-- **consultar_nutricion(objetivo)**: guía general de alimentación.
-- **calcular_macros(...)**: TMB, gasto calórico y macros diarios (Mifflin-St Jeor).
-- **generar_recomendacion_priorizada(...)**: *Chain anidada* — busca la
-  rutina adecuada y luego usa una Chain de LangChain para priorizarla y
-  adaptarla considerando molestias o restricciones del usuario.
-
-## Cómo ejecutarlo localmente
-
-1. Instala las dependencias (incluye LangChain):
+1. Crea un entorno virtual:
+   ```bash
+   python -m venv .venv
    ```
+2. Actívalo en Windows:
+   ```powershell
+   .venv\Scripts\Activate.ps1
+   ```
+3. Instala dependencias:
+   ```bash
    pip install -r requirements.txt
    ```
-2. Copia `.env.example` a `.env` y coloca tu API key de Gemini:
+4. Copia `.env.example` a `.env` y configura:
+   ```dotenv
+   GEMINI_API_KEY=tu_clave_real
+   GEMINI_MODEL=gemini-3.8-flash
    ```
-   GEMINI_API_KEY=tu_api_key_aqui
-   GEMINI_MODEL=gemini-2.5-flash
-   ```
-3. Ejecuta la aplicación:
-   ```
+5. Ejecuta:
+   ```bash
    streamlit run app.py
    ```
 
-## Despliegue
+No subas `.env` ni compartas tu clave API. El repositorio incluye `.env.example` para documentar las variables necesarias.
 
-El archivo `render.yaml` despliega la aplicación en Render como servicio
-web gratuito. Configura `GEMINI_API_KEY` como variable de entorno secreta
-en el dashboard del servicio.
+## Despliegue en Render
 
-## Correspondencia con el diseño conceptual
+El archivo `render.yaml` define el servicio web. En el panel de Render, configura `GEMINI_API_KEY` como variable secreta. Después de subir los cambios a GitHub, realiza un nuevo despliegue.
 
-Esta implementación es una versión simplificada de la arquitectura
-conceptual diseñada previamente (presentación, orquestación del agente,
-herramientas/servicios y datos, con despliegue en contenedores sobre un
-proveedor cloud). Para este prototipo académico:
+## Herramientas
 
-- Streamlit cumple el rol de la capa de presentación (en lugar de una
-  app React Native o Next.js independiente).
-- `core/agent.py`, `chains/` y `prompts/` cumplen el rol de la capa de
-  orquestación del agente (Router Chain, Response Chain, y el Agent
-  multi-tool con Gemini).
-- Los archivos JSON en `data/` cumplen el rol simplificado de la capa de
-  datos, en lugar de una base de datos gestionada como PostgreSQL.
-- El despliegue se realiza directamente en Render como un único servicio
-  web, sin balanceador de carga, contenedores Docker independientes ni
-  monitoreo dedicado, dado el alcance y tiempo disponibles para el
-  prototipo.
+Las herramientas están en `tools/` y consultan datos JSON o calculan estimaciones generales de nutrición. El agente debe utilizar herramientas para consultar datos concretos, en lugar de inventarlos.
 
-El flujo de trabajo (interpretar solicitud, consultar contexto, decidir
-e invocar herramientas, y responder) y los componentes lógicos definidos
-en el diseño sí están implementados y son coherentes con lo propuesto;
-la Router Chain materializa explícitamente la decisión de "¿necesita
-herramientas o no?" del diagrama de flujo original.
+## Limitaciones y seguridad
 
-## Nota importante
+Las recomendaciones son informativas y no sustituyen a profesionales de salud, nutrición o fisioterapia. Ante dolor o lesión, no se debe recomendar entrenar a través del dolor. `MemorySaver` conserva el estado en memoria del proceso: no garantiza persistencia entre reinicios o nuevos despliegues.
 
-Este agente ofrece guías generales de entrenamiento y nutrición. No
-reemplaza a un médico, fisioterapeuta o nutricionista, especialmente ante
-dolor, lesiones o condiciones de salud particulares.
+
+## Pruebas locales y observabilidad (P4)
+
+- La interfaz registra duración total de la invocación, cantidad de mensajes del estado y nodos recorridos.
+- El panel lateral muestra los nodos de la última ejecución y las herramientas solicitadas por el modelo.
+- Cuando ocurre una excepción, el chat presenta un mensaje comprensible y un expander de diagnóstico técnico. No publiques capturas que expongan secretos.
+- La duración se mide en la aplicación; el consumo de tokens solo puede reportarse si el proveedor devuelve metadatos de uso.
+
+### Checklist de validación manual
+
+1. Pregunta conceptual: `¿Qué es la hipertrofia muscular?` (ruta conceptual).
+2. Consulta con herramientas: `Consulta una rutina de hipertrofia para principiante de 4 días` (ruta agente y herramienta de rutinas).
+3. Ejercicio: `¿Cómo se realiza la sentadilla?` (consulta de ejercicios).
+4. Memoria: pregunta por un dato que se haya indicado en el mismo hilo.
+5. Reinicio: pulsa Reiniciar conversación y verifica que el historial visual se vacíe.
+6. Repite las pruebas en la URL pública de Render.
+
+Registra para cada prueba: fecha, pregunta, resultado esperado, resultado obtenido, tiempo observado, nodos/herramientas y corrección aplicada si hubo fallo.

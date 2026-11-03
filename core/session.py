@@ -31,9 +31,12 @@ def ejecutar_agente(mensaje_usuario: str) -> dict:
     # Estado inicial con el nuevo mensaje del usuario
     estado_inicial = {
         "messages": [HumanMessage(content=mensaje_usuario)],
-        "usuario": st.session_state.get("usuario", {})
+        "usuario": st.session_state.get("usuario", {}),
+        "ruta": "",
+        "motivo": "",
+        "pasos_ejecutados": []
     }
 
     # Invocación con thread_id
-    resultado = grafo.invoke(estado_inicial, config=config)
+    resultado = grafo.invoke(estado_inicial, config={**config, "recursion_limit": 30})
     return resultado

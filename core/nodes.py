@@ -43,7 +43,10 @@ CONCEPTUAL_SYSTEM_PROMPT = (
 
 AGENTE_SYSTEM_PROMPT = (
     "Eres el asistente principal de gimnasio. Cuentas con herramientas especializadas "
-    "para consultar ejercicios, rutinas, nutrición y recomendaciones. Utilízalas según corresponda."
+    "para consultar ejercicios, rutinas, nutrición y recomendaciones. Utilízalas según corresponda. "
+    "Usa el perfil del usuario incluido en el contexto para personalizar tus respuestas. "
+    "No diagnostiques lesiones. Si hay dolor o una lesión, recomienda pausar el ejercicio implicado "
+    "y consultar a un profesional de salud. No inventes resultados de herramientas."
 )
 
 
@@ -71,8 +74,23 @@ def conceptual_node(state: GymState) -> dict:
 
 # Nodo 3: Razonamiento con herramientas vinculadas
 def agente_gimnasio_node(state: GymState) -> dict:
+    usuario = state.get("usuario", {}) or {}
+    perfil = (
+        "Perfil conocido del usuario: "
+        f"nombre={usuario.get('nombre', 'No registrado')}; "
+        f"objetivo={usuario.get('objetivo', 'No registrado')}; "
+        f"nivel={usuario.get('nivel', 'No registrado')}; "
+        f"días por semana={usuario.get('dias_disponibles', 'No registrado')}; "
+        f"peso kg={usuario.get('peso_kg', 'No registrado')}; "
+        f"altura cm={usuario.get('altura_cm', 'No registrado')}; "
+        f"edad={usuario.get('edad', 'No registrado')}; "
+        f"sexo={usuario.get('sexo', 'No registrado')}; "
+        f"restricciones={'; '.join(usuario.get('restricciones', [])) or 'Ninguna registrada'}."
+    )
     modelo_con_tools = modelo.bind_tools(TOOLS_GIMNASIO)
-    respuesta = modelo_con_tools.invoke([SystemMessage(content=AGENTE_SYSTEM_PROMPT), *state["messages"]])
+    respuesta = modelo_con_tools.invoke(
+        [SystemMessage(content=AGENTE_SYSTEM_PROMPT + "\\n\\n" + perfil), *state["messages"]]
+    )
     return {
         "messages": [respuesta],
         "pasos_ejecutados": state.get("pasos_ejecutados", []) + ["agente_gimnasio"]
