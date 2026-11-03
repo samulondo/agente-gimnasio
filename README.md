@@ -1,82 +1,88 @@
-# Agente de Gimnasio v03 — LangGraph
+# 🏋️ Agente de Gimnasio – GYM AI
 
-Aplicación conversacional desarrollada con Streamlit, LangChain, LangGraph y Gemini para orientar sobre rutinas, ejercicios y alimentación deportiva.
+Agente conversacional desarrollado con inteligencia artificial para brindar orientación sobre entrenamiento físico, rutinas de ejercicio y nutrición. El proyecto utiliza tecnologías de orquestación de agentes para procesar las consultas de los usuarios y mantener el contexto de las conversaciones.
 
-## Arquitectura
+## 🌐 Enlaces del proyecto
+
+- **Aplicación desplegada:** https://agente-gimnasio.onrender.com
+- **Repositorio GitHub:** https://github.com/samulondo/agente-gimnasio
+
+## 👥 Integrantes
+
+- Samuel Londoño Parra
+- Karen Zúñiga Muriel
+
+**Universidad Católica Luis Amigó**  
+Ingeniería en Sistemas  
+Asignatura: Sistemas Agénticos y Orquestadores de IA
+
+## 🎯 Objetivo del proyecto
+
+Desarrollar un agente conversacional que permita a los usuarios realizar consultas relacionadas con el entrenamiento físico, recibir recomendaciones de rutinas y obtener orientación sobre nutrición, utilizando modelos de inteligencia artificial y herramientas de recuperación de información.
+
+## ⚙️ Tecnologías utilizadas
+
+- **Python:** lenguaje de programación principal.
+- **Streamlit:** desarrollo de la interfaz web.
+- **LangChain:** integración con el modelo de inteligencia artificial.
+- **LangGraph:** organización y orquestación del flujo de trabajo del agente.
+- **Google Gemini:** modelo de inteligencia artificial utilizado para generar respuestas.
+- **RAG (Retrieval-Augmented Generation):** recuperación de información desde una base de conocimiento.
+- **Git y GitHub:** control de versiones y almacenamiento del código.
+- **Render:** despliegue de la aplicación web.
+
+## ✨ Funcionalidades
+
+- Interacción conversacional con el agente de gimnasio.
+- Generación de recomendaciones de rutinas de entrenamiento.
+- Consultas relacionadas con ejercicios y nutrición.
+- Conservación del contexto de la conversación mediante memoria.
+- Organización del procesamiento mediante LangGraph.
+- Integración de herramientas para ampliar las capacidades del agente.
+- Recuperación de información mediante el enfoque RAG.
+- Historial de conversación.
+- Identificación de sesiones mediante Thread ID.
+- Visualización del flujo de ejecución de LangGraph.
+- Indicadores de procesamiento y manejo de errores.
+
+## 📂 Estructura general del proyecto
+
+La organización del proyecto incluye los siguientes componentes:
 
 ```text
-START → enrutador
-          ├── conceptual → END
-          └── agente_gimnasio
-                 ├── tool calls → herramientas → agente_gimnasio
-                 └── respuesta final → END
+agente-gimnasio/
+│
+├── app.py
+├── config/
+│   └── settings.py
+│
+├── core/
+│   ├── nodes.py
+│   ├── session.py
+│   └── state.py
+│
+├── tools/
+│   ├── __init__.py
+│   └── rag_tool.py
+│
+├── tests/
+│   └── test_tools.py
+│
+├── .streamlit/
+│   └── config.toml
+│
+├── .env.example
+├── .gitignore
+├── requirements.txt
+└── README.md
 ```
 
-- `StateGraph` define el flujo.
-- `GymState` usa `add_messages` como reducer para incorporar mensajes al historial.
-- `ToolNode` ejecuta las herramientas solicitadas por el modelo.
-- `MemorySaver` conserva el estado durante la conversación.
-- `thread_id` identifica el hilo de conversación.
-- La interfaz muestra el perfil, el identificador del hilo y la ruta de nodos ejecutados.
+## 💻 Requisitos
 
-## Requisitos
+Para ejecutar el proyecto localmente se necesita:
 
-- Python 3.11
-- Una clave de API de Google Gemini
+- Python instalado.
+- Git instalado.
+- Una clave API válida de Google Gemini.
+- Conexión a internet para
 
-## Ejecución local
-
-1. Crea un entorno virtual:
-   ```bash
-   python -m venv .venv
-   ```
-2. Actívalo en Windows:
-   ```powershell
-   .venv\Scripts\Activate.ps1
-   ```
-3. Instala dependencias:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Copia `.env.example` a `.env` y configura:
-   ```dotenv
-   GEMINI_API_KEY=tu_clave_real
-   GEMINI_MODEL=gemini-3.8-flash
-   ```
-5. Ejecuta:
-   ```bash
-   streamlit run app.py
-   ```
-
-No subas `.env` ni compartas tu clave API. El repositorio incluye `.env.example` para documentar las variables necesarias.
-
-## Despliegue en Render
-
-El archivo `render.yaml` define el servicio web. En el panel de Render, configura `GEMINI_API_KEY` como variable secreta. Después de subir los cambios a GitHub, realiza un nuevo despliegue.
-
-## Herramientas
-
-Las herramientas están en `tools/` y consultan datos JSON o calculan estimaciones generales de nutrición. El agente debe utilizar herramientas para consultar datos concretos, en lugar de inventarlos.
-
-## Limitaciones y seguridad
-
-Las recomendaciones son informativas y no sustituyen a profesionales de salud, nutrición o fisioterapia. Ante dolor o lesión, no se debe recomendar entrenar a través del dolor. `MemorySaver` conserva el estado en memoria del proceso: no garantiza persistencia entre reinicios o nuevos despliegues.
-
-
-## Pruebas locales y observabilidad (P4)
-
-- La interfaz registra duración total de la invocación, cantidad de mensajes del estado y nodos recorridos.
-- El panel lateral muestra los nodos de la última ejecución y las herramientas solicitadas por el modelo.
-- Cuando ocurre una excepción, el chat presenta un mensaje comprensible y un expander de diagnóstico técnico. No publiques capturas que expongan secretos.
-- La duración se mide en la aplicación; el consumo de tokens solo puede reportarse si el proveedor devuelve metadatos de uso.
-
-### Checklist de validación manual
-
-1. Pregunta conceptual: `¿Qué es la hipertrofia muscular?` (ruta conceptual).
-2. Consulta con herramientas: `Consulta una rutina de hipertrofia para principiante de 4 días` (ruta agente y herramienta de rutinas).
-3. Ejercicio: `¿Cómo se realiza la sentadilla?` (consulta de ejercicios).
-4. Memoria: pregunta por un dato que se haya indicado en el mismo hilo.
-5. Reinicio: pulsa Reiniciar conversación y verifica que el historial visual se vacíe.
-6. Repite las pruebas en la URL pública de Render.
-
-Registra para cada prueba: fecha, pregunta, resultado esperado, resultado obtenido, tiempo observado, nodos/herramientas y corrección aplicada si hubo fallo.
